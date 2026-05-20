@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // -------------------------------------------------------------------------
+    // GLOBAL HELPERS
+    // -------------------------------------------------------------------------
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isDataOwner() {
+      return isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    function existingDataOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function validateTrade(data) {
+      return data.userId == request.auth.uid &&
+             data.pair is string && data.pair.size() > 0 &&
+             data.type in ['Buy', 'Sell'] &&
+             data.entryPrice is number &&
+             data.lotSize is number &&
+             data.createdAt is string;
+    }
+
+    // -------------------------------------------------------------------------
+    // DEFAULT DENY
+    // -------------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // TRADES COLLECTION
+    // -------------------------------------------------------------------------
+    match /trades/{tradeId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if existingDataOwner();
+      
+      allow create: if isSignedIn() && validateTrade(request.resource.data) && (request.resource.data.userId == request.auth.uid);
+      
+      allow update: if existingDataOwner() && validateTrade(request.resource.data) && (request.resource.data.userId == request.auth.uid);
+      
+      allow delete: if existingDataOwner();
+    }
+
+    // -------------------------------------------------------------------------
+    // ACCOUNTS COLLECTION
+    // -------------------------------------------------------------------------
+    match /accounts/{userId} {
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId) && request.resource.data.userId == userId;
+    }
+  }
+}

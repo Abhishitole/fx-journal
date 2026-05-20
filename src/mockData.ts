@@ -1,0 +1,68 @@
+import { Trade, DailyStats } from './types';
+import { subDays, format } from 'date-fns';
+
+export const MOCK_TRADES: Trade[] = [
+  {
+    id: '1',
+    userId: 'user1',
+    pair: 'EUR/USD',
+    type: 'Buy',
+    entryTime: subDays(new Date(), 5).toISOString(),
+    exitTime: subDays(new Date(), 5).toISOString(),
+    entryPrice: 1.0850,
+    exitPrice: 1.0920,
+    lotSize: 0.1,
+    pips: 70,
+    profit: 70.00,
+    riskPercent: 1.0,
+    result: 'Win',
+    strategy: 'TJL 1',
+    emotionBefore: 'Confident',
+    emotionAfter: 'Disciplined',
+    createdAt: subDays(new Date(), 5).toISOString(),
+  },
+  {
+    id: '2',
+    userId: 'user1',
+    pair: 'GBP/USD',
+    type: 'Sell',
+    entryTime: subDays(new Date(), 3).toISOString(),
+    exitTime: subDays(new Date(), 3).toISOString(),
+    entryPrice: 1.2650,
+    exitPrice: 1.2680,
+    lotSize: 0.2,
+    pips: -30,
+    profit: -60.00,
+    riskPercent: 1.5,
+    result: 'Loss',
+    strategy: 'SBR',
+    emotionBefore: 'Anxious',
+    emotionAfter: 'Fearful',
+    createdAt: subDays(new Date(), 3).toISOString(),
+  },
+  {
+    id: '3',
+    userId: 'user1',
+    pair: 'XAU/USD',
+    type: 'Buy',
+    entryTime: subDays(new Date(), 1).toISOString(),
+    exitTime: subDays(new Date(), 1).toISOString(),
+    entryPrice: 2020.50,
+    exitPrice: 2035.00,
+    lotSize: 0.05,
+    pips: 145,
+    profit: 72.50,
+    riskPercent: 2.0,
+    result: 'Win',
+    strategy: 'RBS',
+    emotionBefore: 'Disciplined',
+    emotionAfter: 'Confident',
+    createdAt: subDays(new Date(), 1).toISOString(),
+  }
+];
+
+export const MOCK_DAILY_STATS: DailyStats[] = Array.from({ length: 14 }).map((_, i) => ({
+  date: format(subDays(new Date(), 14 - i), 'yyyy-MM-dd'),
+  pnl: Math.random() * 200 - 80,
+  tradesCount: Math.floor(Math.random() * 5),
+}));

@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "Trade": {
+      "title": "Trade",
+      "description": "Information about a single forex trade.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "pair": { "type": "string", "description": "e.g., EUR/USD" },
+        "type": { "type": "string", "enum": ["Buy", "Sell"] },
+        "entryTime": { "type": "string", "format": "date-time" },
+        "exitTime": { "type": "string", "format": "date-time" },
+        "entryPrice": { "type": "number" },
+        "exitPrice": { "type": "number" },
+        "stopLoss": { "type": "number" },
+        "takeProfit": { "type": "number" },
+        "lotSize": { "type": "number" },
+        "pips": { "type": "number" },
+        "profit": { "type": "number", "description": "Profit or loss in USD" },
+        "riskPercent": { "type": "number" },
+        "result": { "type": "string", "enum": ["Win", "Loss", "Break Even"] },
+        "strategy": { "type": "string" },
+        "emotionBefore": { "type": "string" },
+        "emotionAfter": { "type": "string" },
+        "notes": { "type": "string" },
+        "screenshotUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "pair", "type", "entryPrice", "lotSize", "createdAt"]
+    },
+    "AccountSettings": {
+      "title": "AccountSettings",
+      "description": "User account configuration and stats.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "startingBalance": { "type": "number" },
+        "currentBalance": { "type": "number" },
+        "equityGoal": { "type": "number" },
+        "currency": { "type": "string", "default": "USD" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "startingBalance"]
+    }
+  },
+  "firestore": {
+    "/trades/{tradeId}": {
+      "schema": "Trade",
+      "description": "Collection of all trades executed by users."
+    },
+    "/accounts/{userId}": {
+      "schema": "AccountSettings",
+      "description": "User-specific account settings and balance tracking."
+    }
+  }
+}
