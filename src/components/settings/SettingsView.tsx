@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, RotateCcw, ShieldAlert, Wallet } from 'lucide-react';
 
 interface SettingsViewProps {
@@ -14,6 +14,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
   const [balance, setBalance] = useState(startingBalance);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
+
+  useEffect(() => {
+    setBalance(startingBalance);
+  }, [startingBalance]);
 
   const handleSave = () => {
     onUpdateBalance(balance);

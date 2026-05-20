@@ -78,9 +78,25 @@ function TradingJournal() {
           for (const t of localTrades) {
             const id = t.id || Math.random().toString(36).substr(2, 9);
             if (!cloudTradeIds.has(id)) {
+              // Sanitize local values to guarantee valid numeric formats for Firestore rules
+              const entryPrice = typeof t.entryPrice === 'number' && !isNaN(t.entryPrice) ? t.entryPrice : 0;
+              const exitPrice = typeof t.exitPrice === 'number' && !isNaN(t.exitPrice) ? t.exitPrice : 0;
+              const lotSize = typeof t.lotSize === 'number' && !isNaN(t.lotSize) ? t.lotSize : 0.1;
+              const pips = typeof t.pips === 'number' && !isNaN(t.pips) ? t.pips : 0;
+              const profit = typeof t.profit === 'number' && !isNaN(t.profit) ? t.profit : 0;
+              const stopLoss = typeof t.stopLoss === 'number' && !isNaN(t.stopLoss) ? t.stopLoss : 0;
+              const takeProfit = typeof t.takeProfit === 'number' && !isNaN(t.takeProfit) ? t.takeProfit : 0;
+
               await saveTradeToFirestore(db, auth, {
                 ...t,
                 id,
+                entryPrice,
+                exitPrice,
+                lotSize,
+                pips,
+                profit,
+                stopLoss,
+                takeProfit,
                 userId: user.uid,
                 createdAt: t.createdAt || new Date().toISOString()
               });
@@ -122,10 +138,26 @@ function TradingJournal() {
   }, [user]);
 
   const handleAddTrade = async (newTrade: Trade) => {
+    // Sanitize numeric fields to prevent NaN from triggering security rule failures
+    const entryPrice = typeof newTrade.entryPrice === 'number' && !isNaN(newTrade.entryPrice) ? newTrade.entryPrice : 0;
+    const exitPrice = typeof newTrade.exitPrice === 'number' && !isNaN(newTrade.exitPrice) ? newTrade.exitPrice : 0;
+    const lotSize = typeof newTrade.lotSize === 'number' && !isNaN(newTrade.lotSize) ? newTrade.lotSize : 0.1;
+    const pips = typeof newTrade.pips === 'number' && !isNaN(newTrade.pips) ? newTrade.pips : 0;
+    const profit = typeof newTrade.profit === 'number' && !isNaN(newTrade.profit) ? newTrade.profit : 0;
+    const stopLoss = typeof newTrade.stopLoss === 'number' && !isNaN(newTrade.stopLoss) ? newTrade.stopLoss : 0;
+    const takeProfit = typeof newTrade.takeProfit === 'number' && !isNaN(newTrade.takeProfit) ? newTrade.takeProfit : 0;
+
     const id = Math.random().toString(36).substr(2, 9);
     const completedTrade: Trade = {
       ...newTrade,
       id,
+      entryPrice,
+      exitPrice,
+      lotSize,
+      pips,
+      profit,
+      stopLoss,
+      takeProfit,
       userId: user ? user.uid : 'local_user',
       createdAt: new Date().toISOString()
     };
