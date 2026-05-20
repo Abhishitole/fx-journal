@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, ListFilter, BarChart3, Settings, Brain, LogOut, PlusCircle, Menu, X as CloseIcon } from 'lucide-react';
-import { useFirebase } from '../../providers/FirebaseProvider';
+import { LayoutDashboard, ListFilter, BarChart3, Settings, Brain, PlusCircle, Menu, X as CloseIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface SidebarItemProps {
@@ -30,7 +29,6 @@ export const AppLayout: React.FC<{ children: React.ReactNode, activeTab: string,
   activeTab, 
   setActiveTab 
 }) => {
-  const { user, logout, signInWithGoogle } = useFirebase();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigation = [
@@ -63,40 +61,6 @@ export const AppLayout: React.FC<{ children: React.ReactNode, activeTab: string,
             />
           ))}
         </nav>
-
-        <div className="mt-auto pt-4 border-t border-slate-800">
-          {user ? (
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3 px-2">
-                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700 shrink-0">
-                  {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName || ''} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-sm font-medium">{user.displayName?.[0] || 'U'}</span>
-                  )}
-                </div>
-                <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-semibold truncate">{user.displayName || 'Trader'}</p>
-                  <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                </div>
-              </div>
-              <button 
-                onClick={logout}
-                className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-red-400 transition-colors w-full"
-              >
-                <LogOut size={18} />
-                <span className="text-sm font-medium">Logout</span>
-              </button>
-            </div>
-          ) : (
-            <button 
-              onClick={signInWithGoogle}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-3 font-medium transition-all"
-            >
-              Sign In
-            </button>
-          )}
-        </div>
       </aside>
 
       {/* Mobile Drawer */}
