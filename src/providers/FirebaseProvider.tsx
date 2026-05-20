@@ -81,9 +81,17 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const signInWithGoogle = async () => {
-    if (!auth) return;
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    if (!auth) {
+      alert("Cloud Sync is currently in Offline Local Mode. To enable secure Google sign-in and cloud database features, please complete the Firebase Setup step in AI Studio. Your trade journal entries are automatically stored safely in your browser in the meantime!");
+      return;
+    }
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (err: any) {
+      console.error("Authentication error:", err);
+      alert(`Sign in failed: ${err?.message || err}. If you are in an embedded preview, you can open the app in a new tab or complete Firebase configuration.`);
+    }
   };
 
   const logout = async () => {
